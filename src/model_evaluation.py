@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from config import PROCESSED_DATA_PATH, MODEL_PATH
 
 # --- Configuration ---
-S3_BUCKET_NAME = "<YOUR-BUCKET-NAME>"
+S3_BUCKET_NAME = "india-crop-yield-dvc-storage"
 CHAMPION_MODEL_S3_KEY = "production/model.pkl"
 CHAMPION_MODEL_LOCAL_PATH = "models/champion.pkl"
 BASELINE_SCORE_THRESHOLD = 0.7  # For the very first model
