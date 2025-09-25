@@ -41,8 +41,15 @@ jobs:
       - name: Train Model
         run: python src/model_training.py
 
-      - name: Evaluate Model
+      - name: Evaluate Model and Compare
         run: python src/model_evaluation.py
+
+      - name: Promote Model to Production
+        if: success()
+        run: |
+          echo "Promoting new model to production path..."
+          aws s3 cp models/model.pkl s3://india-crop-yield-dvc-storage/production/model.pkl
+
 
       - name: Version and Push Model to DVC
         env:
