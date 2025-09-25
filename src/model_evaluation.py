@@ -11,10 +11,12 @@ def evaluate_model():
     print("Evaluating model...")
     df = pd.read_csv(PROCESSED_DATA_PATH)
     
-    features = ['State', 'District', 'Season', 'Crop', 'Area', 'Temperature', 'Precipitation']
+    # CORRECTED: Feature list must match the training script exactly.
+    features = ['Crop_Year', 'Season', 'State', 'Area', 'Annual_Rainfall', 'Fertilizer', 'Pesticide', 'Crop']
     target = 'Yield'
     
-    X = pd.get_dummies(df[features], columns=['State', 'District', 'Season', 'Crop'], drop_first=True)
+    categorical_features = ['Season', 'State', 'Crop']
+    X = pd.get_dummies(df[features], columns=categorical_features, drop_first=True)
     y = df[target]
 
     _, X_test, _, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -27,8 +29,8 @@ def evaluate_model():
     
     print(f"Model R^2 score: {score:.4f}")
     
-    # We set a quality gate. The pipeline will fail if the model is not good enough.
-    assert score > 0.5, f"Model score {score} is below the threshold of 0.5!"
+    # With better features, we can set a higher quality gate for our model.
+    assert score > 0.7, f"Model score {score} is below the new threshold of 0.7!"
     print("Model performance is acceptable.")
 
 if __name__ == "__main__":
