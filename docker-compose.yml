@@ -1,0 +1,10 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  api:
+    build: .
+    container_name: crop-api
+    ports:
+      - "8000:8000"
