@@ -13,7 +13,7 @@ COPY ./requirements.txt /app/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # Copy the app directory into the container
-COPY ./app /app/app
+COPY ./app /app
 
 # Command to run the application
 # We use 0.0.0.0 to make it accessible outside the container
