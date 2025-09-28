@@ -9,9 +9,12 @@ WORKDIR /code
 COPY ./requirements.txt .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Copy your entire local 'app' folder into the /code directory
-# This will create the correct /code/app/main.py structure
+# Copy your application code
 COPY ./app ./app
+
+# --- ADD THIS LINE ---
+# Copy the frontend files into the image
+COPY ./frontend ./frontend
 
 # This command now runs from /code and can correctly find the 'app' package
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
