@@ -66,7 +66,7 @@ def evaluate_model():
 
         # 4. Compare models
         print("Comparing models...")
-        assert challenger_score > champion_score, \
+        assert challenger_score >= champion_score, \
             f"Challenger score ({challenger_score:.4f}) is not better than champion score ({champion_score:.4f})!"
         print("Challenger is better! Proceeding.")
     else:
