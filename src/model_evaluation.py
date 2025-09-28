@@ -72,7 +72,7 @@ def evaluate_model():
     else:
         # 4. Compare challenger to baseline if no champion exists
         print("Comparing to baseline score...")
-        assert challenger_score > BASELINE_SCORE_THRESHOLD, \
+        assert challenger_score >= BASELINE_SCORE_THRESHOLD, \
             f"Challenger score ({challenger_score:.4f}) is below the baseline threshold of {BASELINE_SCORE_THRESHOLD}!"
         print("Challenger passed baseline! Proceeding.")
 
