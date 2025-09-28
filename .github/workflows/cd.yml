@@ -45,12 +45,12 @@ jobs:
         run: python src/model_evaluation.py
 
       # --- THIS IS THE CORRECT PLACEMENT FOR YOUR SNIPPET ---
-      - name: ✨ Promote Model and Columns to Production
+      - name: Promote Model and Columns to Production
         if: success()
         run: |
           echo "Promoting new model and columns to production path..."
-          aws s3 cp models/model.pkl s3://<YOUR-BUCKET-NAME>/production/model.pkl
-          aws s3 cp models/model_columns.json s3://<YOUR-BUCKET-NAME>/production/model_columns.json
+          aws s3 cp models/model.pkl s3://india-crop-yield-dvc-storage/production/model.pkl
+          aws s3 cp models/model_columns.json s3://india-crop-yield-dvc-storage/production/model_columns.json
       # ---------------------------------------------------------
 
       - name: Version and Push Model to DVC
