@@ -22,13 +22,17 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-southeast-2 # Change to your S3 bucket's region
 
+      # --- THIS STEP IS UPDATED ---
       - name: Set up Python, DVC, and jq
         uses: actions/setup-python@v4
         with:
           python-version: '3.13'
       - run: |
           pip install -r requirements.txt
+          # Explicitly upgrade DVC to a modern version that supports --no-header
+          pip install --upgrade "dvc[s3]"
           sudo apt-get update && sudo apt-get install -y jq
+      # ---------------------------
 
       - name: Configure Git
         run: |
@@ -43,19 +47,13 @@ jobs:
           chmod +x run_experiments.sh
           ./run_experiments.sh
 
-      # --- THIS IS THE UPDATED, MORE ROBUST STEP ---
       - name: Find and Apply Best Experiment
         id: find_best
         run: |
-          # Use DVC's built-in sorting to find the best experiment.
-          # tail -n 1 gets the last line (the best score, since sort is ascending).
-          # awk '{print $1}' extracts the first column (the experiment name).
           BEST_EXP=$(dvc exp show --sort-by reports/metrics.json:r2_score --no-header | tail -n 1 | awk '{print $1}')
-          
           echo "Best experiment found: $BEST_EXP"
           dvc exp apply $BEST_EXP
           echo "best_exp_name=$BEST_EXP" >> $GITHUB_OUTPUT
-      # ----------------------------------------------
 
       - name: Push Best Model to DVC Remote
         run: dvc push
