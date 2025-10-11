@@ -1,0 +1,39 @@
+# dvc.yaml
+# We are creating a params.yaml that DVC can use to populate paths.
+# This makes our python scripts more generic.
+vars:
+  - params.yaml
+
+stages:
+  process:
+    cmd: python src/data_processing.py --config params.yaml
+    deps:
+      - data/raw/crop_yield_india.csv
+      - src/data_processing.py
+    outs:
+      - data/processed
+
+  train:
+    cmd: python src/model_training.py --params params.yaml
+    deps:
+      - data/processed
+      - src/model_training.py
+    params:
+      - process
+      - train
+    outs:
+      - models/model.pkl
+      - models/model_columns.json
+
+  evaluate:
+    cmd: python src/model_evaluation.py --params params.yaml
+    deps:
+      - models/model.pkl
+      - data/processed
+      - src/model_evaluation.py
+    params:
+      - process
+      - model
+    metrics:
+      - reports/metrics.json:
+          cache: false

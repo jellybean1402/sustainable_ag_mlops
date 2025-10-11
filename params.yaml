@@ -1,0 +1,35 @@
+# params.yaml
+data:
+  raw: data/raw/crop_yield_india.csv
+  processed: data/processed
+
+model:
+  path: models/model.pkl
+  columns_path: models/model_columns.json
+  features: 
+    - Crop_Year
+    - Season
+    - State
+    - Area
+    - Annual_Rainfall
+    - Fertilizer
+    - Pesticide
+    - Crop
+  target: Yield
+  categorical_features:
+    - Season
+    - State
+    - Crop
+
+reports:
+  metrics: reports/metrics.json
+
+process:
+  random_state: 42
+  test_size: 0.2
+
+train:
+  # Base experiment parameters
+  n_estimators: 100
+  max_depth: 10
+  random_state: 42
