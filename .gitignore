@@ -1,14 +1,21 @@
+# .gitignore
+
 # Python
 __pycache__/
 *.pyc
 venv/
 
-# Data and Models (tracked by DVC)
-data/
-models/
-
 # IDE files
 .vscode/
 .idea/
-/data
-/models
+
+# DVC data folders - Ignore the contents of these specific directories
+/data/raw/
+/data/processed/
+/models/
+
+# --- ADD THIS EXCEPTION ---
+# DVC metadata files that MUST be tracked by Git.
+# The '!' negates the ignore rule for any matching file.
+!*.dvc
+!dvc.lock
