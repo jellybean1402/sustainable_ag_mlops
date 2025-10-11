@@ -5,8 +5,8 @@
 echo "--- Starting DVC Experiment Grid Search ---"
 
 # Define the hyperparameters to test
-N_ESTIMATORS=(50 100 150 200)
-MAX_DEPTH=(10 20 30 50)
+N_ESTIMATORS=(50 100)
+MAX_DEPTH=(10 20)
 
 # --- CHANGE 1: Queue experiments instead of running them directly ---
 # Loop through each combination and add it to the experiment queue.
