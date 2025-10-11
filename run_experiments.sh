@@ -6,7 +6,7 @@ echo "--- Starting DVC Experiment Grid Search ---"
 
 # Define the hyperparameters to test
 N_ESTIMATORS=(50 100 150 200)
-MAX_DEPTH=(5 10 15 20 none) # 'none' will be interpreted as None in Python
+MAX_DEPTH=(5 10 15 20)
 
 # Loop through each combination of hyperparameters
 for estimators in "${N_ESTIMATORS[@]}"; do
