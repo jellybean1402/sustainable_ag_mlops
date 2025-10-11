@@ -20,7 +20,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-2
+          aws-region: ap-southeast-2 # Change to your S3 bucket's region
 
       - name: Set up Python, DVC, and jq
         uses: actions/setup-python@v4
@@ -30,10 +30,17 @@ jobs:
           pip install -r requirements.txt
           sudo apt-get update && sudo apt-get install -y jq
 
+      # --- THIS IS THE NEW, CRUCIAL STEP ---
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+      # ------------------------------------
+
       - name: Pull DVC Cache
         run: dvc pull
 
-      - name: Run DVC Experiments from script
+      - name: Run DVC Experiments from Script
         run: |
           chmod +x run_experiments.sh
           ./run_experiments.sh
@@ -41,14 +48,9 @@ jobs:
       - name: Find and Apply Best Experiment
         id: find_best
         run: |
-          # Get experiment data as JSON, find the best experiment name
           BEST_EXP=$(dvc exp show --json | jq -r '.[].revs[].data.experiments | .[] | .data.metrics."reports/metrics.json".data.r2_score as $score | {name: .name, score: $score} | select(.score != null)' | jq -s 'sort_by(.score) | .[-1].name')
           echo "Best experiment found: $BEST_EXP"
-          
-          # Apply the best experiment's results to the workspace
           dvc exp apply $BEST_EXP
-          
-          # Set the best experiment name as a GitHub Actions output
           echo "best_exp_name=$BEST_EXP" >> $GITHUB_OUTPUT
 
       - name: Push Best Model to DVC Remote
@@ -57,18 +59,16 @@ jobs:
       - name: Promote Best Model to Production S3 Path
         run: |
           echo "Promoting model from experiment ${{ steps.find_best.outputs.best_exp_name }} to production..."
-          aws s3 cp models/model.pkl s3://aayushmlopsbucket/production/model.pkl
-          aws s3 cp models/model_columns.json s3://aayushmlopsbucket/production/model_columns.json
+          aws s3 cp models/model.pkl s3://india-crop-yield-dvc-storage/production/model.pkl
+          aws s3 cp models/model_columns.json s3://india-crop-yield-dvc-storage/production/model_columns.json
 
       - name: Commit Experiment Results
         run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          # The git config is no longer needed here
           git add .
           git commit -m "chore: Run experiments and apply best model (${{ steps.find_best.outputs.best_exp_name }})"
           git push
       
-  # This deployment job remains the same, but now it will be triggered after the best model is ready.
   deploy-to-ec2:
     runs-on: ubuntu-latest
     needs: train-and-deploy
