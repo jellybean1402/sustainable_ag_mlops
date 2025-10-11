@@ -1,0 +1,100 @@
+schema: '2.0'
+stages:
+  process:
+    cmd: python src/data_processing.py --config params.yaml
+    deps:
+    - path: data/raw/crop_yield_india.csv
+      hash: md5
+      md5: cefa48c7486bbc1fa4f2f65f4e1ef342
+      size: 1620945
+      isexec: true
+    - path: src/data_processing.py
+      hash: md5
+      md5: 4f26c0b0687f79734d7e8f31c4d4ed9d
+      size: 913
+      isexec: true
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 78a9273c800ac8b29182c3ca24f4956f
+      size: 1658643
+      isexec: true
+  train:
+    cmd: python src/model_training.py --params params.yaml
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 78a9273c800ac8b29182c3ca24f4956f
+      size: 1658643
+      isexec: true
+    - path: src/model_training.py
+      hash: md5
+      md5: 16ce64ae1a0c66fd79db5f366f2e9737
+      size: 1865
+      isexec: true
+    params:
+      params.yaml:
+        process:
+          random_state: 42
+          test_size: 0.2
+        train:
+          n_estimators: 100
+          max_depth: 10
+          random_state: 42
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 84a92299abf43567900a235fd64d324b
+      size: 4201725
+      isexec: true
+    - path: models/model_columns.json
+      hash: md5
+      md5: 50f10da9def7f25b3e8997cfef580910
+      size: 1710
+      isexec: true
+  evaluate:
+    cmd: python src/model_evaluation.py --params params.yaml
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 78a9273c800ac8b29182c3ca24f4956f
+      size: 1658643
+      isexec: true
+    - path: models/model.pkl
+      hash: md5
+      md5: 84a92299abf43567900a235fd64d324b
+      size: 4201725
+      isexec: true
+    - path: src/model_evaluation.py
+      hash: md5
+      md5: 8dbda5556691977cb2b2ffad0417f802
+      size: 1813
+      isexec: true
+    params:
+      params.yaml:
+        model:
+          path: models/model.pkl
+          columns_path: models/model_columns.json
+          features:
+          - Crop_Year
+          - Season
+          - State
+          - Area
+          - Annual_Rainfall
+          - Fertilizer
+          - Pesticide
+          - Crop
+          target: Yield
+          categorical_features:
+          - Season
+          - State
+          - Crop
+        process:
+          random_state: 42
+          test_size: 0.2
+    outs:
+    - path: reports/metrics.json
+      hash: md5
+      md5: a9542cd0844188eaa5fc5fa6b286ed6d
+      size: 32
+      isexec: true

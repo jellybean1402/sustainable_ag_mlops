@@ -1,8 +1,11 @@
+# src/model_evaluation.py
+
 import pandas as pd
 import pickle
 import json
 import yaml
 import argparse
+import os  # <-- Make sure 'os' is imported
 from sklearn.metrics import r2_score
 from sklearn.model_selection import train_test_split
 
@@ -40,6 +43,11 @@ def evaluate_model(params_path):
     score = r2_score(y_test, preds)
     
     print(f"Model R^2 score: {score:.4f}")
+    
+    # --- THIS IS THE FIX ---
+    # Ensure the reports directory exists before writing to it
+    os.makedirs(os.path.dirname(metrics_path), exist_ok=True)
+    # -----------------------
     
     with open(metrics_path, 'w') as f:
         json.dump({"r2_score": score}, f)
