@@ -15,6 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # --- THIS IS THE FINAL, GUARANTEED FIX ---
+      - name: Set up DVC using the official action
+        uses: iterative/setup-dvc@v1
+      # ------------------------------------
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -30,7 +35,6 @@ jobs:
       - run: |
           pip install -r requirements.txt
           # Explicitly upgrade DVC to a modern version that supports --no-header
-          pip install --upgrade "dvc[s3]"
           sudo apt-get update && sudo apt-get install -y jq bc
       # ---------------------------
 
