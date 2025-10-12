@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script runs a grid search, captures the metric from each run,
+# This script runs a grid search, reads the metric file after each run,
 # and identifies the best-performing experiment.
 
 # Exit immediately if a command exits with a non-zero status.
@@ -23,16 +23,15 @@ for estimators in "${N_ESTIMATORS[@]}"; do
     EXP_NAME="exp-${estimators}-${depth}"
     echo "--- Running Experiment: ${EXP_NAME} ---"
     
-    # Run a single experiment and capture its JSON output.
-    # The --json flag provides machine-readable output for a single run.
-    RESULT_JSON=$(dvc exp run \
+    # Run a single experiment. DVC will automatically apply the results to the workspace.
+    dvc exp run \
       --set-param "train.n_estimators=${estimators}" \
       --set-param "train.max_depth=${depth}" \
-      -n "${EXP_NAME}" \
-      --json)
+      -n "${EXP_NAME}"
       
-    # Use jq to parse the r2_score from the result of this single run
-    CURRENT_SCORE=$(echo $RESULT_JSON | jq -r '.[].metrics."reports/metrics.json".data.r2_score')
+    # Read the R^2 score directly from the metrics file that was just created.
+    # This is the most direct and reliable way to get the result.
+    CURRENT_SCORE=$(jq -r '.r2_score' reports/metrics.json)
     
     echo "Experiment ${EXP_NAME} finished with R^2 score: ${CURRENT_SCORE}"
     
