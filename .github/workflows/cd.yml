@@ -31,7 +31,7 @@ jobs:
           pip install -r requirements.txt
           # Explicitly upgrade DVC to a modern version that supports --no-header
           pip install --upgrade "dvc[s3]"
-          sudo apt-get update && sudo apt-get install -y jq
+          sudo apt-get update && sudo apt-get install -y jq bc
       # ---------------------------
 
       - name: Configure Git
@@ -46,14 +46,6 @@ jobs:
         run: |
           chmod +x run_experiments.sh
           ./run_experiments.sh
-
-      - name: Debug step
-        id: debug
-        run: |
-          dvc exp show --csv --sort-by reports/metrics.json:r2_score
-          echo "__________________________________________"
-          exit 1
-
 
       - name: Find and Apply Best Experiment
         id: find_best
