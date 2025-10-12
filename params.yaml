@@ -6,21 +6,20 @@ data:
 model:
   path: models/model.pkl
   columns_path: models/model_columns.json
-  features: 
-    - Crop_Year
-    - Season
-    - State
-    - Area
-    - Annual_Rainfall
-    - Fertilizer
-    - Pesticide
-    - Crop
+  features:
+  - Crop_Year
+  - Season
+  - State
+  - Area
+  - Annual_Rainfall
+  - Fertilizer
+  - Pesticide
+  - Crop
   target: Yield
   categorical_features:
-    - Season
-    - State
-    - Crop
-
+  - Season
+  - State
+  - Crop
 reports:
   metrics: reports/metrics.json
 
@@ -30,6 +29,6 @@ process:
 
 train:
   # Base experiment parameters
-  n_estimators: 100
-  max_depth: 10
+  n_estimators: 50
+  max_depth: 15
   random_state: 42
