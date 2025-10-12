@@ -58,7 +58,7 @@ jobs:
       - name: Find and Apply Best Experiment
         id: find_best
         run: |
-          BEST_EXP=$(dvc exp show --csv --sort-by reports/metrics.json:r2_score | tail -n 1 | cut -d ',' -f 1)
+          BEST_EXP=$(cat best_experiment.txt)
           echo "Best experiment found: $BEST_EXP"
           dvc experiments apply $BEST_EXP
           echo "best_exp_name=$BEST_EXP" >> $GITHUB_OUTPUT
