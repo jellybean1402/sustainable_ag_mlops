@@ -47,12 +47,20 @@ jobs:
           chmod +x run_experiments.sh
           ./run_experiments.sh
 
+      - name: Debug step
+        id: debug
+        run: |
+          dvc exp show --csv --sort-by reports/metrics.json:r2_score
+          echo "__________________________________________"
+          exit 1
+
+
       - name: Find and Apply Best Experiment
         id: find_best
         run: |
           BEST_EXP=$(dvc exp show --csv --sort-by reports/metrics.json:r2_score | tail -n 1 | cut -d ',' -f 1)
           echo "Best experiment found: $BEST_EXP"
-          dvc exp apply $BEST_EXP
+          dvc experiments apply $BEST_EXP
           echo "best_exp_name=$BEST_EXP" >> $GITHUB_OUTPUT
 
       - name: Push Best Model to DVC Remote
