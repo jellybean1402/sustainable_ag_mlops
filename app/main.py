@@ -8,6 +8,7 @@ from contextlib import asynccontextmanager
 from botocore.exceptions import ClientError
 from fastapi.responses import FileResponse
 from .schemas import InputFeatures, PredictionOut
+from fastapi.middleware.cors import CORSMiddleware
 
 # --- Configuration ---
 S3_BUCKET_NAME = "india-crop-yield-dvc-storage" # <-- REPLACE WITH YOUR BUCKET NAME
@@ -45,6 +46,16 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Crop Yield Prediction API",
     lifespan=lifespan
+)
+
+origins = ["*"] 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"], # Allow all methods (GET, POST, etc.)
+    allow_headers=["*"], # Allow all headers
 )
 
 # --- NEW: Serve the frontend from the root path ("/") ---
