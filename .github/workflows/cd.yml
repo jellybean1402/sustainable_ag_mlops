@@ -66,8 +66,12 @@ jobs:
       - name: Commit Experiment Results
         run: |
           git add .
-          git commit -m "chore: Run experiments and apply best model (${{ steps.find_best.outputs.best_exp_name }})"
-          git push
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: Run experiments and apply best model (${{ steps.find_best.outputs.best_exp_name }})"
+            git push
+          else
+            echo "No changes to commit. Best model is already up to date."
+          fi
 
   deploy-to-ec2:
     runs-on: ubuntu-latest
